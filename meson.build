@@ -8,14 +8,15 @@ project('dtn-mission-planner', 'cpp',
 cpp = meson.get_compiler('cpp')
 
 ## imgui core (enable all backends via options)
-imgui_include_dirs = include_directories('.', 'external/imgui/backends', 'external/imgui')
+imgui_include_dirs = include_directories('.', 'external/imgui/backends', 'external/imgui', 'external/imnodes')
 # these are the core imgui files that create the imgui library
 imgui_sources = [
     'external/imgui/imgui_demo.cpp', 
     'external/imgui/imgui_draw.cpp', 
     'external/imgui/imgui_tables.cpp', 
     'external/imgui/imgui_widgets.cpp', 
-    'external/imgui/imgui.cpp']
+    'external/imgui/imgui.cpp',
+    'external/imnodes/imnodes.cpp']
 
 imgui_dependencies = []
 
@@ -115,23 +116,22 @@ if get_option('marmalade').enabled()
     endif
 endif
 
+
 imgui_library = static_library('imgui',
-    imgui_sources,
+    [imgui_sources],
     dependencies: imgui_dependencies,
-    include_directories: imgui_include_dirs,
+    include_directories: [imgui_include_dirs],
 )
 imgui_dep = declare_dependency(include_directories: imgui_include_dirs, link_with: imgui_library)
-# END imgui core 
 
-# START imnodes core
-imnodes_source = ['external/imnodes/imnodes.cpp']
-imnodes_include_dirs = include_directories('external/imnodes')
-imnodes_library = static_library('imnodes',
-    imnodes_source, 
-    dependencies:imgui_dependencies,
-    include_directories: [imnodes_include_dirs])
-imnodes_dep = declare_dependency(include_directories: imnodes_include_dirs)
-# END imnodes core
+
+# Boost
+boost_dep = dependency('boost', modules : ['filesystem'])
 
 # dtnmp executable definition
-executable('dtnmp', 'main.cpp', dependencies : [imgui_dep, imnodes_dep], include_directories : imgui_include_dirs)
+dtnmp_sources = ['src/main.cpp',
+    'src/DtnMp.cpp',
+    'src/DtnMpApp.cpp']
+dtnmp_include_drs = ['include']
+
+executable('dtnmp', dtnmp_sources, dependencies : [imgui_dep, boost_dep], include_directories : [dtnmp_include_drs, imgui_include_dirs])

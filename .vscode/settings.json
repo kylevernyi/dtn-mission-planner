@@ -1,4 +1,7 @@
 {
     "cmake.configureOnOpen": false,
-    "C_Cpp.default.compileCommands": "builddir/compile_commands.json"
+    "C_Cpp.default.compileCommands": "builddir/compile_commands.json",
+    "files.associations": {
+        "string": "cpp"
+    }
 }
